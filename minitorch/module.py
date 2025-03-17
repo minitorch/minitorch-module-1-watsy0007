@@ -45,11 +45,19 @@ class Module:
         Returns:
             The name and `Parameter` of each ancestor parameter.
         """
-        raise NotImplementedError("Need to include this file from past assignment.")
+        result = [(k, v) for k, v in self.__dict__["_parameters"].items()]
+        for mod_name, mod in self.__dict__["_modules"].items():
+            result.extend([(f"{mod_name}.{n}", v) for n, v in mod.named_parameters()])
+
+        return result
 
     def parameters(self) -> Sequence[Parameter]:
         "Enumerate over all the parameters of this module and its descendents."
-        raise NotImplementedError("Need to include this file from past assignment.")
+        result = list(self.__dict__["_parameters"].values())
+        for mod in self.__dict__["_modules"].values():
+            result.extend(mod.parameters())
+
+        return result
 
     def add_parameter(self, k: str, v: Any) -> Parameter:
         """
